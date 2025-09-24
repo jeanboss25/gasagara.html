@@ -19,6 +19,7 @@
       padding: 25px;
       text-align: center;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      position: relative;
     }
     h1 {
       margin: 0;
@@ -73,6 +74,87 @@
       font-weight: bold;
     }
 
+    /* Moving welcome message styles */
+    .moving-text-container {
+      width: 100%;
+      overflow: hidden;
+      background: #f0f0f0;
+      padding: 10px 0;
+      margin-bottom: 20px;
+    }
+    .moving-text {
+      font-size: 1.5em;
+      color: #004080;
+      font-weight: bold;
+      white-space: nowrap;
+      display: inline-block;
+      padding-left: 100%;
+      animation: zigzagMove 15s linear infinite;
+    }
+    @keyframes zigzagMove {
+      0% { 
+        transform: translateX(0) translateY(0); 
+      }
+      20% { 
+        transform: translateX(-20%) translateY(10px); 
+      }
+      40% { 
+        transform: translateX(-40%) translateY(-10px); 
+      }
+      60% { 
+        transform: translateX(-60%) translateY(10px); 
+      }
+      80% { 
+        transform: translateX(-80%) translateY(-10px); 
+      }
+      100% { 
+        transform: translateX(-100%) translateY(0); 
+      }
+    }
+
+    /* Clock styles */
+    .clock-container {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 15px;
+      z-index: 1000;
+    }
+    .clock {
+      background: #222;
+      color: #fff;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      padding: 8px 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      transition: background 0.3s, color 0.3s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 120px;
+    }
+    .clock-label {
+      font-size: 0.7rem;
+      color: #aaa;
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+    .vibrate {
+      animation: vibrate 0.2s linear infinite;
+      background: #ff4081 !important;
+      color: #fff !important;
+    }
+    @keyframes vibrate {
+      0% { transform: translate(0); }
+      20% { transform: translate(-1px, 1px); }
+      40% { transform: translate(-1px, -1px); }
+      60% { transform: translate(1px, 1px); }
+      80% { transform: translate(1px, -1px); }
+      100% { transform: translate(0); }
+    }
+
     /* Responsive adjustments */
     @media (max-width: 768px) {
       nav {
@@ -89,6 +171,16 @@
       h1 {
         font-size: 1.8em;
       }
+      .clock-container {
+        position: relative;
+        top: 0;
+        right: 0;
+        justify-content: center;
+        margin-top: 10px;
+      }
+      .moving-text {
+        font-size: 1.2em;
+      }
     }
   </style>
 </head>
@@ -97,6 +189,18 @@
 <header>
   <h1>Groupe Scolaire Gasagara</h1>
   <p class="logo">Quality Education for All</p>
+  
+  <!-- Clock container -->
+  <div class="clock-container">
+    <div class="clock" id="gmt-clock">
+      <span class="clock-label">GMT</span>
+      <span class="clock-time" id="gmt-time">--:--:--</span>
+    </div>
+    <div class="clock" id="rwanda-clock">
+      <span class="clock-label">Rwanda (GMT+2)</span>
+      <span class="clock-time" id="rwanda-time">--:--:--</span>
+    </div>
+  </div>
 </header>
 
 <nav>
@@ -105,43 +209,15 @@
   <a href="#admissions">Admissions</a>
   <a href="#department">Departments</a>
   <a href="#gallery">Gallery</a>
-  <a href="#News & Events">News & Events</a>
+  <a href="#news-events">News & Events</a>
   <a href="#contact">Contact Us</a>
 </nav>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Welcome</title>
-    <style>
-        .moving-text {
-            width: 100%;
-            overflow: hidden;
-            white-space: nowrap;
-            box-sizing: border-box;
-            background: #f0f0f0;
-            font-size: 2em;
-            color: #333;
-            padding: 20px 0;
-            position: relative;
-        }
-        .moving-text span {
-            display: inline-block;
-            padding-left: 100%;
-            animation: moveText 10s linear infinite;
-        }
-        @keyframes moveText {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-100%); }
-        }
-    </style>
-</head>
-<body>
-    <div class="moving-text">
-        <span>Welcome to GSGASAGARA!  We are glad to have you here. Enjoy exploring our homepage!"Welcome to GS Gasagara School — nurturing young minds, inspiring futures, and building a community of lifelong learners. Together, we strive for excellence and growth."</span>
-    </div>
-</body>
-</html>
+
+<!-- Moving welcome message -->
+<div class="moving-text-container">
+  <div class="moving-text">Welcome to GS GASAGARA! We are glad to have you here. Enjoy exploring our platform!</div>
+</div>
+
 <section id="home">
   <h2>Welcome to Our School</h2>
   <p>We are honored to welcome you to Groupe Scolaire Gasagara (GS GASAGARA), a premier educational institution committed to academic excellence and holistic development of students in Rwanda.</p>
@@ -195,7 +271,7 @@
   <!-- You can add image galleries here later -->
 </section>
 
-<section id="News & Events">
+<section id="news-events">
   <h2>News & Events</h2>
   <p>Stay updated with our latest school news and upcoming events.</p>
   <!-- News items can be added here -->
@@ -214,6 +290,46 @@
 <footer>
   &copy; 2025 Groupe Scolaire Gasagara. All Rights Reserved. | Quality education for all.
 </footer>
+
+<script>
+  // Clock functionality
+  function pad(n) { return n < 10 ? '0' + n : n; }
+
+  function updateClocks() {
+    const now = new Date();
+    // GMT
+    const gmtHours = pad(now.getUTCHours());
+    const gmtMinutes = pad(now.getUTCMinutes());
+    const gmtSeconds = pad(now.getUTCSeconds());
+    document.getElementById('gmt-time').textContent = `${gmtHours}:${gmtMinutes}:${gmtSeconds}`;
+
+    // Rwanda (GMT+2)
+    let rwandaDate = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+    const rwandaHours = pad(rwandaDate.getUTCHours());
+    const rwandaMinutes = pad(rwandaDate.getUTCMinutes());
+    const rwandaSeconds = pad(rwandaDate.getUTCSeconds());
+    document.getElementById('rwanda-time').textContent = `${rwandaHours}:${rwandaMinutes}:${rwandaSeconds}`;
+  }
+
+  function checkVibrate() {
+    const now = new Date();
+    if (now.getMinutes() % 10 === 0 && now.getSeconds() === 0) {
+      document.getElementById('gmt-clock').classList.add('vibrate');
+      document.getElementById('rwanda-clock').classList.add('vibrate');
+      setTimeout(() => {
+        document.getElementById('gmt-clock').classList.remove('vibrate');
+        document.getElementById('rwanda-clock').classList.remove('vibrate');
+      }, 5000); // vibrate for 5 seconds
+    }
+  }
+
+  setInterval(() => {
+    updateClocks();
+    checkVibrate();
+  }, 1000);
+
+  updateClocks();
+</script>
 
 </body>
 </html>
